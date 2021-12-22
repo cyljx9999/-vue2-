@@ -158,9 +158,11 @@
   export default {
     name: "sysUserList",
     data() {
-      var checkUserName = (rule, value, callback) => {
+      let checkUserName = (rule, value, callback) => {
         if (!value || value.trim() === "") {
           return callback(new Error('请填写姓名'));
+        }else {
+          callback()
         }
 
       };
@@ -170,7 +172,9 @@
           userName: [
             {
               validator: checkUserName,
+              required: true,
               trigger: "change",
+              message: "请填写正确电话姓名",
             },
           ],
           phone: [
@@ -338,8 +342,8 @@
       //对话框确认事件
       onConfirm() {
         this.$refs.addForm.validate(async validate => {
+          console.log(validate + "--i");
           if (validate) {
-            console.log(this);
             let res = null;
             if (this.addModel.type === "0") {
               res = await addUserApi(this.addModel);
@@ -354,7 +358,6 @@
               this.dialog.visible = false;
               this.$message.success(res.msg);
             }
-
           }
         })
       },
@@ -367,7 +370,8 @@
       async getUserList() {
         let res = await getUserListApi(this.params);
         if (res.code === 200) {
-          this.tableList = res.data.records;
+          this.tableList = res.data.list.records;
+          this.params.total = res.data.list.total;
         }
       },
       //页容量改变的时候触发
