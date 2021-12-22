@@ -15,7 +15,8 @@
         <el-input v-model="params.phone"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="el-icon-search">查询</el-button>
+        <el-button @click="searchBtn" icon="el-icon-search">查询</el-button>
+        <el-button @click="resetBtn" style="color: #FF7670;" icon="el-icon-delete">重置</el-button>
         <el-button @click="addUser" type="primary" icon="el-icon-plus">新增</el-button>
       </el-form-item>
     </el-form>
@@ -152,6 +153,7 @@
 <script>
   import {getUserListApi, addUserApi, editUserApi, deleteUserApi} from "@/api/user";
   import SysDialog from '@/components/System/SysDialog';
+  import Logo from "../../layout/components/Sidebar/Logo";
 
   export default {
     name: "sysUserList",
@@ -260,6 +262,16 @@
     },
 
     methods: {
+      // 搜索按钮 点击事件
+      searchBtn() {
+        this.getUserList();
+      },
+      // 重置按钮 点击事件
+      resetBtn() {
+        this.params.phone = '';
+        this.params.userName = '';
+        this.getUserList();
+      },
       //新增员工按钮事件
       addUser() {
         // 清空表单内容
@@ -283,19 +295,38 @@
       },
       // 表格删除按钮 点击事件
       async deleteUser(row) {
-        let res = await deleteUserApi({userId:row.userId});
-        console.log(res);
-        if (res && res.code === 200) {
-          this.getUserList();
+        let deleteStatus = await this.$myconfirm("确认删除该员工吗");
+        if (deleteStatus) {
+          let res = await deleteUserApi({userId: row.userId});
+          if (res && res.code === 200) {
+            this.getUserList();
+            this.$message.success(res.msg);
+          }
         }
       },
       // 表格是否离职按钮 点击事件
-      changeStatus(row) {
-
+      async changeStatus(row) {
+        let params = {
+          userId: row.userId,
+          status: row.status
+        };
+        let res = await editUserApi(params);
+        if (res && res.code === 200) {
+          this.getUserList();
+          this.$message.success(res.msg);
+        }
       },
       // 表格是否使用按钮 点击事件
-      changeUsed() {
-
+      async changeUsed(row) {
+        let params = {
+          userId: row.userId,
+          isUsed: row.isUsed
+        };
+        let res = await editUserApi(params);
+        if (res && res.code === 200) {
+          this.getUserList();
+          this.$message.success(res.msg);
+        }
       },
       //对话框确认事件
       onConfirm() {
@@ -314,6 +345,7 @@
               this.getUserList();
               // 关闭弹窗
               this.dialog.visible = false;
+              this.$message.success(res.msg);
             }
 
           }
@@ -333,11 +365,13 @@
       },
       //页容量改变的时候触发
       sizeChange(val) {
-        console.log(val);
+        this.params.pageSize = val;
+        this.getUserList();
       },
       //页数改变的时候触发
       currentChange(val) {
-        console.log(val);
+        this.params.currentPage = val;
+        this.getUserList();
       },
     }
   }
