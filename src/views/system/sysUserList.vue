@@ -158,28 +158,35 @@
   export default {
     name: "sysUserList",
     data() {
+      var checkUserName = (rule, value, callback) => {
+        if (!value || value.trim() === "") {
+          return callback(new Error('请填写姓名'));
+        }
+
+      };
       return {
         // 表单验证规则
         rules: {
           userName: [
             {
-              required: true,
+              validator: checkUserName,
               trigger: "change",
-              message: "请填写姓名",
             },
           ],
           phone: [
             {
+              pattern:"^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$",
               required: true,
               trigger: "change",
-              message: "请填写电话号码",
+              message: "请填写正确电话号码格式",
             },
           ],
           idCard: [
             {
+              pattern:"^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
               required: true,
               trigger: "change",
-              message: "请填写身份证号码",
+              message: "请填写正确的身份证号码格式",
             },
           ],
           status: [
