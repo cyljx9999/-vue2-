@@ -9,6 +9,20 @@
     <div class="container" :style="{ height: height + 'px' }">
       <slot name="content"></slot>
     </div>
+    <el-dialog
+      width="30%"
+      title="内层 Dialog"
+      :visible="innerVisible"
+      append-to-body>
+      <template>
+        <div style="height: 400px">
+          <h3 v-for="(key,value) in validErrorOjb" >
+            <span>{{value}}</span>:<span>{{key}}</span>
+          </h3>
+        </div>
+      </template>
+    </el-dialog>
+
     <span slot="footer" class="dialog-footer">
       <el-button type="danger" @click="onClose()">取 消</el-button>
       <el-button type="primary" @click="onConfirm()">确 定</el-button>
@@ -40,6 +54,16 @@
         type: Number,
         default: 250,
       },
+      innerVisible: {
+        type: Boolean,
+        default: false,
+      },
+      validErrorOjb: {
+        type: Object,
+        default() {
+          return {}
+        }
+      }
     },
 
     components: {},

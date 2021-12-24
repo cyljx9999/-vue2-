@@ -99,6 +99,8 @@
       :visible="dialog.visible"
       :height="dialog.height"
       :width="dialog.width"
+      :innerVisible="innerVisible"
+      :validErrorOjb="validErrorOjb"
       @onClose="onClose"
       @onConfirm="onConfirm"
     >
@@ -153,7 +155,7 @@
 <script>
   import {getUserListApi, addUserApi, editUserApi, deleteUserApi} from "@/api/user";
   import SysDialog from '@/components/System/SysDialog';
-  import Logo from "../../layout/components/Sidebar/Logo";
+  import Valid from "@/components/Valid/Valid";
 
   export default {
     name: "sysUserList",
@@ -161,12 +163,13 @@
       let checkUserName = (rule, value, callback) => {
         if (!value || value.trim() === "") {
           return callback(new Error('请填写姓名'));
-        }else {
+        } else {
           callback()
         }
 
       };
       return {
+
         // 表单验证规则
         rules: {
           userName: [
@@ -177,17 +180,17 @@
               message: "请填写正确电话姓名",
             },
           ],
-          phone: [
-            {
-              pattern:"^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$",
-              required: true,
-              trigger: "change",
-              message: "请填写正确电话号码格式",
-            },
-          ],
+          // phone: [
+          //   {
+          //     pattern:"^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$",
+          //     required: true,
+          //     trigger: "change",
+          //     message: "请填写正确电话号码格式",
+          //   },
+          // ],
           idCard: [
             {
-              pattern:"^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
+              pattern: "^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
               required: true,
               trigger: "change",
               message: "请填写正确的身份证号码格式",
@@ -235,6 +238,7 @@
           height: 240,
           width: 610,
         },
+        innerVisible: false,
         //表格的高度
         tableHeight: 200,
         //搜索框数据绑定
@@ -247,13 +251,16 @@
         },
         //表格数据
         tableList: [],
+        //数据校验错误信息
+        validErrorOjb: {}
       }
     },
 
     props: {},
 
     components: {
-      SysDialog
+      SysDialog,
+      Valid
     },
 
     computed: {},
@@ -342,7 +349,6 @@
       //对话框确认事件
       onConfirm() {
         this.$refs.addForm.validate(async validate => {
-          console.log(validate + "--i");
           if (validate) {
             let res = null;
             if (this.addModel.type === "0") {
@@ -357,6 +363,9 @@
               // 关闭弹窗
               this.dialog.visible = false;
               this.$message.success(res.msg);
+            } else if (res && res.code === 400) {
+              this.validErrorOjb = res.data.error;
+              this.innerVisible = true;
             }
           }
         })
