@@ -99,7 +99,7 @@
       :visible="dialog.visible"
       :height="dialog.height"
       :width="dialog.width"
-      :innerVisible="innerVisible"
+      :innerVisible="dialog.innerVisible"
       :validErrorOjb="validErrorOjb"
       @onClose="onClose"
       @onConfirm="onConfirm"
@@ -237,8 +237,8 @@
           visible: false,
           height: 240,
           width: 610,
+          innerVisible: false,
         },
-        innerVisible: false,
         //表格的高度
         tableHeight: 200,
         //搜索框数据绑定
@@ -364,15 +364,21 @@
               this.dialog.visible = false;
               this.$message.success(res.msg);
             } else if (res && res.code === 400) {
-              this.validErrorOjb = res.data.error;
-              this.innerVisible = true;
+              //将数据错误信息存储
+              this.validErrorOjb = res;
+              //设置弹出层组件嵌套内层状态是否展示
+              this.dialog.innerVisible = true;
             }
           }
         })
       },
       //对话框关闭
-      onClose() {
-        this.dialog.visible = false;
+      onClose(val) {
+        if (val === 400) {
+          this.dialog.innerVisible = false;
+        } else {
+          this.dialog.visible = false;
+        }
       },
 
       //获取员工列表数据

@@ -10,13 +10,17 @@
       <slot name="content"></slot>
     </div>
     <el-dialog
-      width="30%"
-      title="内层 Dialog"
+      top='1vh'
+      :width="width + 'px'"
+      center
+      title="数据校验失败，请重试"
       :visible="innerVisible"
-      append-to-body>
+      :before-close="onClose"
+      append-to-body
+      custom-class="inner-el-dialog__header">
       <template>
-        <div style="height: 400px">
-          <h3 v-for="(key,value) in validErrorOjb" >
+        <div>
+          <h3 v-for="(key,value) in validErrorOjb.data.error" >
             <span>{{value}}</span>:<span>{{key}}</span>
           </h3>
         </div>
@@ -34,7 +38,9 @@
   export default {
     name: "SysDialog",
     data() {
-      return {}
+      return {
+        innerVisibleStatus:true
+      }
     },
 
     props: {
@@ -84,7 +90,7 @@
 
       //关闭事件
       onClose() {
-        this.$emit("onClose");
+        this.$emit("onClose",this.validErrorOjb.code);
       },
       //确认事件
       onConfirm() {
@@ -101,6 +107,7 @@
   }
 
   .el-dialog__wrapper {
+
     ::v-deep .el-dialog {
       border-top-left-radius: 7px;
       border-top-right-radius: 7px;
@@ -129,6 +136,13 @@
         border-top: 1px solid #e8eaec !important;
         padding: 10px;
       }
+    }
+
+    ::v-deep .inner-el-dialog__header{
+      .el-dialog__header{
+        background-color: #ff4334;
+      }
+
     }
   }
 </style>
