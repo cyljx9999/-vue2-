@@ -155,7 +155,6 @@
 <script>
   import {getUserListApi, addUserApi, editUserApi, deleteUserApi} from "@/api/user";
   import SysDialog from '@/components/System/SysDialog';
-  import Valid from "@/components/Valid/Valid";
 
   export default {
     name: "sysUserList",
@@ -260,7 +259,6 @@
 
     components: {
       SysDialog,
-      Valid
     },
 
     computed: {},

@@ -13,13 +13,13 @@
       top='1vh'
       :width="width + 'px'"
       center
-      title="数据校验失败，请重试"
+      :title="validErrorOjb.msg"
       :visible="innerVisible"
       :before-close="onClose"
       append-to-body
       custom-class="inner-el-dialog__header">
       <template>
-        <div>
+        <div v-if="validErrorOjb.data">
           <h3 v-for="(key,value) in validErrorOjb.data.error" >
             <span>{{value}}</span>:<span>{{key}}</span>
           </h3>
