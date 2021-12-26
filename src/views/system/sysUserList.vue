@@ -317,31 +317,34 @@
           if (res && res.code === 200) {
             this.getUserList();
             this.$message.success(res.msg);
+          }else {
+            this.getUserList();
+            this.$message.error(res.msg);
+
           }
         }
       },
       // 表格是否离职按钮 点击事件
       async changeStatus(row) {
-        let params = {
-          userId: row.userId,
-          status: row.status
-        };
-        let res = await editUserApi(params);
+        let res = await editUserApi(row);
         if (res && res.code === 200) {
           this.getUserList();
           this.$message.success(res.msg);
+        }else {
+          this.getUserList();
+          this.$message.error(res.msg);
         }
       },
       // 表格是否使用按钮 点击事件
       async changeUsed(row) {
-        let params = {
-          userId: row.userId,
-          isUsed: row.isUsed
-        };
-        let res = await editUserApi(params);
+
+        let res = await editUserApi(row);
         if (res && res.code === 200) {
           this.getUserList();
           this.$message.success(res.msg);
+        }else {
+          this.getUserList();
+          this.$message.error(res.msg);
         }
       },
       //对话框确认事件
