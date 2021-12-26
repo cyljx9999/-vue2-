@@ -1,5 +1,5 @@
 import http from "@/utils/http";
 
-export async function getRoleLisApi(param) {
+export async function getRoleListApi(param) {
   return http.get("/api/role/list",param)
 }
