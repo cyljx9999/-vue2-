@@ -19,7 +19,7 @@ import resetForm from '@/utils/resetForm'
 Vue.prototype.$resetForm = resetForm;
 //对象快速复制
 import objCopy from '@/utils/objCopy'
-Vue.prototype.$objCoppy = objCopy;
+Vue.prototype.$objCopy = objCopy;
 //信息提示框
 import myConfirm from '@/utils/myConfirm'
 Vue.prototype.$myconfirm = myConfirm;

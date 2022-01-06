@@ -142,8 +142,8 @@
           </el-form-item>
           <el-form-item class="el-form-item-isUsed" style="width:280px" prop="isUsed" label="启用:">
             <el-radio-group v-model="addModel.isUsed" class="el-form-item-isUsed-test">
-              <el-radio :label="'1'">是</el-radio>
-              <el-radio :label="'0'">否</el-radio>
+              <el-radio :label="'0'">是</el-radio>
+              <el-radio :label="'1'">否</el-radio>
             </el-radio-group>
           </el-form-item>
         </el-form>
@@ -176,7 +176,7 @@
               validator: checkUserName,
               required: true,
               trigger: "change",
-              message: "请填写正确电话姓名",
+              message: "请填写正确姓名",
             },
           ],
           phone: [
@@ -187,14 +187,14 @@
               message: "请填写正确电话号码格式",
             },
           ],
-          idCard: [
-            {
-              pattern: "^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
-              required: true,
-              trigger: "change",
-              message: "请填写正确的身份证号码格式",
-            },
-          ],
+          // idCard: [
+          //   {
+          //     pattern: "^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
+          //     required: true,
+          //     trigger: "change",
+          //     message: "请填写正确的身份证号码格式",
+          //   },
+          // ],
           status: [
             {
               required: true,
@@ -303,7 +303,7 @@
         this.$resetForm("addForm", this.addModel);
         this.addModel.type = "1";
         // 数据回显
-        this.$objCoppy(this.addModel, row);
+        this.$objCopy(this.addModel, row);
         // 设置类型为 编辑状态
         this.dialog.title = "编辑员工信息";
         // 显示弹窗
@@ -320,19 +320,19 @@
           }else {
             this.getUserList();
             this.$message.error(res.msg);
-
           }
         }
       },
       // 表格是否离职按钮 点击事件
       async changeStatus(row) {
         let res = await editUserApi(row);
+        console.log(res);
         if (res && res.code === 200) {
           this.getUserList();
           this.$message.success(res.msg);
         }else {
           this.getUserList();
-          this.$message.error(res.msg);
+          this.$message.error("修改失败，请重试或者联系管理员");
         }
       },
       // 表格是否使用按钮 点击事件
@@ -344,7 +344,7 @@
           this.$message.success(res.msg);
         }else {
           this.getUserList();
-          this.$message.error(res.msg);
+          this.$message.error("修改失败，请重试或者联系管理员");
         }
       },
       //对话框确认事件
@@ -375,19 +375,23 @@
       },
       //对话框关闭
       onClose(val) {
-        if (val === 400) {
-          this.dialog.innerVisible = false;
-        } else {
+        //判断内层错误提示之后关闭再点击关闭外层的情况
+        if (val === 400 && this.dialog.innerVisible === false){
           this.dialog.visible = false;
         }
+        if (val === 400) {
+          this.dialog.innerVisible = false;
+        }
+
       },
 
       //获取员工列表数据
       async getUserList() {
         let res = await getUserListApi(this.params);
+        console.log(res);
         if (res.code === 200) {
-          this.tableList = res.data.list.records;
-          this.params.total = res.data.list.total;
+          this.tableList = res.data.records;
+          this.params.total = res.data.total;
         }
       },
       //页容量改变的时候触发
