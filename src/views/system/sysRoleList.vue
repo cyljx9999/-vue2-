@@ -191,7 +191,6 @@
               this.dialog.visible = false;
               this.$message.success(res.msg);
             }else {
-              console.log(231231);
               this.$message.error(res.msg);
             }
           }

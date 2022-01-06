@@ -388,7 +388,6 @@
       //获取员工列表数据
       async getUserList() {
         let res = await getUserListApi(this.params);
-        console.log(res);
         if (res.code === 200) {
           this.tableList = res.data.records;
           this.params.total = res.data.total;
