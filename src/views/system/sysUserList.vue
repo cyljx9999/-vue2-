@@ -187,14 +187,14 @@
               message: "请填写正确电话号码格式",
             },
           ],
-          // idCard: [
-          //   {
-          //     pattern: "^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
-          //     required: true,
-          //     trigger: "change",
-          //     message: "请填写正确的身份证号码格式",
-          //   },
-          // ],
+          idCard: [
+            {
+              pattern: "^(^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$)|(^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])((\\d{4})|\\d{3}[Xx])$)$",
+              required: true,
+              trigger: "change",
+              message: "请填写正确的身份证号码格式",
+            },
+          ],
           status: [
             {
               required: true,
@@ -245,7 +245,7 @@
           phone: "",
           userName: "",
           pageSize: 10,
-          currentPage: 1,
+          currentPage: 4,
           total: 0,
         },
         //表格数据
@@ -369,6 +369,8 @@
               this.validErrorOjb = res;
               //设置弹出层组件嵌套内层状态是否展示
               this.dialog.innerVisible = true;
+            }else {
+              this.$message.error("操作失败请重新尝试或者联系管理员");
             }
           }
         })
@@ -379,10 +381,12 @@
         if (val === 400 && this.dialog.innerVisible === false){
           this.dialog.visible = false;
         }
+        //关闭内层错误框
         if (val === 400) {
           this.dialog.innerVisible = false;
         }
-
+        // 不进行提交操作就关闭
+        this.dialog.visible = false;
       },
 
       //获取员工列表数据
@@ -391,6 +395,9 @@
         if (res.code === 200) {
           this.tableList = res.data.records;
           this.params.total = res.data.total;
+          this.params.currentPage = res.data.current
+        }else {
+          this.$message.error("列表数据获取失败，请联系管理员");
         }
       },
       //页容量改变的时候触发

@@ -148,7 +148,7 @@
       async deleteRole(row){
         let flag = await this.$myconfirm("确定删除该角色嘛");
         if (flag) {
-          let res = await deleteRoleApi({roleId:row.roleId})
+          let res = await deleteRoleApi({roleId:row.roleId});
           if (res && res.code === 200) {
             this.getRoleList();
             this.$message.success(res.msg)
@@ -191,7 +191,7 @@
               this.dialog.visible = false;
               this.$message.success(res.msg);
             }else {
-              this.$message.error(res.msg);
+              this.$message.error("操作失败请重新尝试或者联系管理员");
             }
           }
         })
@@ -229,6 +229,9 @@
         if (res.code === 200) {
           this.roleList = res.data.records;
           this.params.total = res.data.total;
+          this.params.currentPage = res.data.current
+        }else {
+          this.$message.error("列表数据获取失败，请联系管理员");
         }
       }
     }
