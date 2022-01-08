@@ -23,6 +23,8 @@ Vue.prototype.$objCopy = objCopy;
 //信息提示框
 import myConfirm from '@/utils/myConfirm'
 Vue.prototype.$myconfirm = myConfirm;
+//引入iconfont
+import "@/assets/icons/iconfont.css"
 
 /**
  * If you don't want to use mock-server

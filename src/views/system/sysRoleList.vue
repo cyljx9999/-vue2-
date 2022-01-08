@@ -55,6 +55,8 @@
       :height="dialog.height"
       :width="dialog.width"
       :visible="dialog.visible"
+      :innerVisible="dialog.innerVisible"
+      :validErrorOjb="validErrorOjb"
       @onConfirm="onConfirm"
       @onClose="onClose"
     >
@@ -108,6 +110,7 @@
           height: 120,
           width: 610,
           visible: false,
+          innerVisible: false,
         },
         //表格数据
         roleList: [],
@@ -119,7 +122,9 @@
           currentPage: 1, //当前第几页
           roleName: "",
           total: 0, //总条数
-        }
+        },
+        //数据校验错误信息
+        validErrorOjb:{}
       }
     },
 
@@ -171,8 +176,17 @@
         this.dialog.visible = true;
       },
       //新增或编辑取消事件
-      onClose() {
-        this.dialog.visible = false;
+      onClose(val) {
+        //判断内层错误提示之后关闭再点击关闭外层的情况
+        if (val === 400 && this.dialog.innerVisible === false){
+          this.dialog.visible = false;
+        }else if (val === 400) {
+          //关闭内层错误框
+          this.dialog.innerVisible = false;
+        }else{
+          // 不进行提交操作就关闭
+          this.dialog.visible = false;
+        }
       },
       //新增或编辑确认事件
       onConfirm() {
@@ -190,6 +204,11 @@
               this.getRoleList();
               this.dialog.visible = false;
               this.$message.success(res.msg);
+            }else if (res && res.code === 400) {
+              //将数据错误信息存储
+              this.validErrorOjb = res;
+              //设置弹出层组件嵌套内层状态是否展示
+              this.dialog.innerVisible = true;
             }else {
               this.$message.error("操作失败请重新尝试或者联系管理员");
             }

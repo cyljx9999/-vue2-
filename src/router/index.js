@@ -63,19 +63,19 @@ export const constantRoutes = [
     meta: { title: '系统管理', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'sysUserList',
+        path: '/sysUserList',
         name: 'sysUserList',
         component: () => import('@/views/system/sysUserList'),
         meta: { title: '员工管理', icon: 'table' }
       },
       {
-        path: 'sysRoleList',
+        path: '/sysRoleList',
         name: 'sysRoleList',
         component: () => import('@/views/system/sysRoleList'),
         meta: { title: '角色管理', icon: 'tree' }
       },
       {
-        path: 'sysMenuList',
+        path: '/sysMenuList',
         name: 'sysMenuList',
         component: () => import('@/views/system/sysMenuList'),
         meta: { title: '权限管理', icon: 'tree' }

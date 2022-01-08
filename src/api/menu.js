@@ -9,3 +9,8 @@ export async function getMenuListApi() {
 export async function addMenuApi(param){
   return http.post("/api/menu", param);
 }
+
+//获取上级菜单数据
+export async function getParentTreeApi(){
+  return http.get("/api/menu/parent");
+}

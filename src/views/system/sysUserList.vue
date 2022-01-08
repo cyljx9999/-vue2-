@@ -380,13 +380,13 @@
         //判断内层错误提示之后关闭再点击关闭外层的情况
         if (val === 400 && this.dialog.innerVisible === false){
           this.dialog.visible = false;
-        }
-        //关闭内层错误框
-        if (val === 400) {
+        }else if (val === 400) {
+          //关闭内层错误框
           this.dialog.innerVisible = false;
+        }else{
+          // 不进行提交操作就关闭
+          this.dialog.visible = false;
         }
-        // 不进行提交操作就关闭
-        this.dialog.visible = false;
       },
 
       //获取员工列表数据

@@ -20,7 +20,7 @@
       custom-class="inner-el-dialog__header">
       <template>
         <div v-if="validErrorOjb.data">
-          <h3 v-for="(key,value) in validErrorOjb.data.error" >
+          <h3 v-for="(key,value) in validErrorOjb.data" >
             <span>{{value}}</span>:<span>{{key}}</span>
           </h3>
         </div>

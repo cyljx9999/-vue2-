@@ -26,6 +26,11 @@ service.interceptors.request.use(
   error => {
     // do something with request error
     console.log(error)// for debug
+    Message({
+      message: error.msg || "服务器出错",
+      type: 'error',
+      duration: 5 * 1000
+    })
     return Promise.reject(error)
   }
 )
@@ -75,7 +80,7 @@ service.interceptors.response.use(
   error => {
     console.log('err' + error) // for debug
     Message({
-      message: error.msg + " 123" || "服务器出错",
+      message: error.msg || "服务器出错",
       type: 'error',
       duration: 5 * 1000
     })
