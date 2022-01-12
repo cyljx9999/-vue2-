@@ -14,3 +14,11 @@ export async function addMenuApi(param){
 export async function getParentTreeApi(){
   return http.get("/api/menu/parent");
 }
+//编辑权限
+export async function editMenuApi(param){
+  return http.put("/api/menu",param)
+}
+//删除权限
+export async function deleteMenuApi(param){
+  return http.delete("/api/menu",param)
+}

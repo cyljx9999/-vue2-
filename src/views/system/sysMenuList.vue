@@ -17,22 +17,22 @@
         default-expand-all
       >
         <el-table-column prop="menuLabel" label="菜单名称"></el-table-column>
-        <el-table-column prop="type" label="菜单类型">
+        <el-table-column align="center"  prop="type" label="菜单类型">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.type === '0'">目录</el-tag>
             <el-tag type="success" v-if="scope.row.type === '1'">菜单</el-tag>
             <el-tag type="danger" v-if="scope.row.type === '2'">按钮</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="icon" label="菜单图标">
+        <el-table-column align="center"  prop="icon" label="菜单图标">
           <template slot-scope="scope">
             <i :class="scope.row.icon"></i>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="路由名称"> </el-table-column>
-        <el-table-column prop="path" label="路由地址"> </el-table-column>
-        <el-table-column prop="url" label="组件路径"> </el-table-column>
-        <el-table-column prop="menuCode" label="权限字段"> </el-table-column>
+        <el-table-column align="center"  prop="name" label="路由名称"> </el-table-column>
+        <el-table-column align="center" prop="path" label="路由地址"> </el-table-column>
+        <el-table-column align="center"  prop="url" label="组件路径"> </el-table-column>
+        <el-table-column align="center"  prop="menuCode" label="权限字段"> </el-table-column>
         <el-table-column align="center" width="200" label="操作">
           <template slot-scope="scope">
             <el-button
@@ -222,9 +222,8 @@
 </template>
 
 <script>
-    import {getMenuListApi,getParentTreeApi} from "@/api/menu";
+    import {getMenuListApi,getParentTreeApi,addMenuApi,editMenuApi,deleteMenuApi} from "@/api/menu";
     import SysDialog from "@/components/System/SysDialog";
-    import {addMenuApi} from "../../api/menu";
 
     export default {
         name: "sysMenuList",
@@ -318,7 +317,7 @@
                 name: "",
                 path: "",
                 url: "",
-                type: "0",
+                type: "",
                 icon: "",
                 remark: "",
                 parentName: "",
@@ -359,10 +358,23 @@
         methods: {
           //编辑按钮
           editMenu(row) {
-            console.log(row);
+            this.$resetForm("addForm", this.addModel);
+            this.$objCopy(this.addModel,row);
+            this.addModel.editType = "1";
+            this.dialog.title = "编辑菜单";
+            this.dialog.visible = true;
           },
-          deleteMenu(row) {
-            console.log(row);
+          async deleteMenu(row) {
+            let deleteFlag = await this.$myconfirm("确认删除该数据嘛？");
+            if (deleteFlag) {
+              let res = await deleteMenuApi({menuId:row.menuId});
+              if (res && res.code === 200) {
+                this.getMenuList();
+                this.$message.success(res.msg);
+              }else {
+                this.$message.error(res.msg);
+              }
+            }
           },
           //树节点加号和减号的点击事件
           openBtn(data) {
@@ -400,11 +412,19 @@
                 let res = null;
                 if (this.addModel.editType === "0"){
                   res = await addMenuApi(this.addModel);
+                }else if (this.addModel.editType === "1"){
+                  res = await editMenuApi(this.addModel);
                 }
                 if (res && res.code === 200){
                   this.getMenuList();
                   this.dialog.visible = false;
                   this.$message.success(res.msg);
+                }else {
+                  if (res) {
+                    this.$message.error(res.msg);
+                  }else {
+                    this.$message.error("系统未知异常，请联系管理员");
+                  }
                 }
               }
             });
@@ -424,6 +444,7 @@
           },
           // 新增按钮
           addMenu(){
+            this.$resetForm("addForm", this.addModel);
             this.dialog.title = "新增菜单";
             this.addModel.editType = "0";
             this.dialog.visible = true;
