@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getInfo} from '@/api/user'
+import { getToken, setToken, removeToken,setUserId  } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -30,12 +30,18 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password,userType } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ username: username.trim(), password: password,userType:userType }).then(response => {
+
         const { data } = response
+        console.log(data);
+        setToken(data.token);
+        //保存用户id到cookies
+        setUserId(data.userId);
+        console.log(123);
         commit('SET_TOKEN', data.token)
-        setToken(data.token)
+
         resolve()
       }).catch(error => {
         reject(error)

@@ -81,9 +81,18 @@
     created() {},
     methods: {
       async submit() {
-        this.$refs.loginForm.validate((valid) => {
+        this.$refs.loginForm.validate(async (valid) => {
           if (valid) {
-            this.$router.push("home");
+            this.loading = true;
+            this.$store
+              .dispatch("user/login", this.loginForm)
+              .then(() => {
+                this.$router.push({ path: this.redirect || "/" });
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
           }
         });
       },
