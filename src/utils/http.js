@@ -27,7 +27,7 @@ service.interceptors.request.use(
     // do something with request error
     console.log(error)// for debug
     Message({
-      message: error.msg || "服务器出错",
+      message: error.msg || "请求超时，请重试/联系管理员",
       type: 'error',
       duration: 5 * 1000
     })
@@ -80,7 +80,7 @@ service.interceptors.response.use(
   error => {
     console.log('err' + error) // for debug
     Message({
-      message: error.msg || "服务器出错",
+      message: error.msg || "请求超时，请重试/联系管理员",
       type: 'error',
       duration: 5 * 1000
     })

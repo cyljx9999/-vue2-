@@ -32,6 +32,14 @@ export async function getInfo(){
   return http.get("/api/user/getInfo",param)
 }
 
+//根据用户id查询角色id
+export async function getRoleByUserId(param){
+  return http.get("/api/user/getRoleByUserId", param);
+}
+//分配角色保存
+export async function assignSave(param){
+  return http.post("/api/user/saveRole", param);
+}
 
 export function logout() {
   return request({

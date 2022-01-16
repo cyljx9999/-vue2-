@@ -58,7 +58,7 @@
 
         </template>
       </el-table-column>
-      <el-table-column align="center" width="200" label="操作">
+      <el-table-column align="center" width="290" label="操作">
         <template slot-scope="scope">
           <el-button
             icon="el-icon-edit"
@@ -66,7 +66,13 @@
             size="small"
             @click="editUser(scope.row)"
           >编辑
-          </el-button
+          </el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            size="small"
+            @click="assignRole(scope.row)"
+          >分配角色</el-button
           >
           <el-button
             icon="el-icon-delete"
@@ -149,12 +155,56 @@
         </el-form>
       </div>
     </SysDialog>
+
+    <!-- 分配角色弹框 -->
+    <sys-dialog
+      :title="roleDialog.title"
+      :height="roleDialog.height"
+      :width="roleDialog.width"
+      :visible="roleDialog.visible"
+      @onClose="roleClose"
+      @onConfirm="roleConfirm"
+    >
+      <template slot="content">
+        <el-table :height="roleHeight" :data="roleList" border stripe>
+          <el-table-column width="50" align="center" label="选择">
+            <template slot-scope="scope">
+              <el-radio v-model="radio" :label="scope.row.roleId" @change="getCurrentRow(scope.row)">
+                {{""}}
+              </el-radio>
+
+            </template>
+          </el-table-column>
+          <el-table-column prop="roleName" label="角色名称"></el-table-column>
+          <el-table-column prop="remark" label="角色备注"></el-table-column>
+        </el-table>
+        <el-pagination
+          @size-change="roleSizeChange"
+          @current-change="roleCurrentChange"
+          :current-page.sync="roleParam.currentPage"
+          :page-sizes="[10, 20, 40, 80, 100]"
+          :page-size="roleParam.pageSize"
+          layout="total, sizes, prev, pager, next"
+          :total="roleParam.total"
+          background
+        >
+        </el-pagination>
+      </template>
+    </sys-dialog>
   </el-main>
 </template>
 
 <script>
-  import {getUserListApi, addUserApi, editUserApi, deleteUserApi} from "@/api/user";
+  import {
+    getUserListApi,
+    addUserApi,
+    editUserApi,
+    deleteUserApi,
+    getRoleByUserId,
+    assignSave
+  } from "@/api/user";
   import SysDialog from '@/components/System/SysDialog';
+  import {getRoleListApi} from "../../api/role";
 
   export default {
     name: "sysUserList",
@@ -168,7 +218,29 @@
 
       };
       return {
-
+        //分配角色保存参数
+        assignParam:{
+          roleId:'',
+          userId:''
+        },
+        radio:'',
+        //角色列表高度
+        roleHeight:0,
+        //角色列表
+        roleList:[],
+        //角色列表分页
+        roleParam:{
+          pageSize:10,
+          currentPage:1,
+          total:0
+        },
+        //分配角色弹框
+        roleDialog: {
+          title: "",
+          height: 400,
+          width: 800,
+          visible: false,
+        },
         // 表单验证规则
         rules: {
           userName: [
@@ -245,7 +317,7 @@
           phone: "",
           userName: "",
           pageSize: 10,
-          currentPage: 4,
+          currentPage: 1,
           total: 0,
         },
         //表格数据
@@ -278,6 +350,71 @@
     },
 
     methods: {
+      //角色选中事件
+      getCurrentRow(row){
+        this.assignParam.roleId = row.roleId;
+      },
+      //页数改变
+      roleCurrentChange(val){
+        this.roleParam.currentPage = val;
+        this.getRoleList();
+      },
+      //页容量改变触发
+      roleSizeChange(val){
+        this.roleParam.pageSize = val;
+        this.getRoleList();
+      },
+      //分配角色按钮
+      async assignRole(row) {
+        this.radio = '';
+        this.assignParam.userId = row.userId;
+        //设置弹框属性
+        this.roleDialog.title = '为【'+row.userName+'】分配角色';
+        this.roleDialog.visible = true;
+        //查询角色列表
+        await this.getRoleList();
+        this.$nextTick(()=>{
+          this.roleHeight = window.innerHeight-620
+        });
+        //角色回显
+        let res = await getRoleByUserId({userId:row.userId});
+        if(res && res.code === 200){
+          if (res.data){
+            this.radio = res.data.roleId;
+          }
+        }else {
+          this.roleDialog.visible = false;
+          this.$message.error(res.msg)
+        }
+      },
+      //获取角色权限列表
+      async getRoleList(){
+        let res = await getRoleListApi(this.roleParam);
+        if(res.code === 200){
+          this.roleList = res.data.records;
+          this.roleParam.total = res.data.total;
+        }else {
+          this.$message.error(res.msg)
+        }
+      },
+      //分配角色确认
+      async roleConfirm() {
+        if(!this.radio){
+          this.$message.warning('请选择角色!');
+          return;
+        }
+        let res = await assignSave(this.assignParam);
+        if(res && res.code === 200){
+          this.$message.success(res.msg);
+          this.roleDialog.visible = false;
+        }else {
+          this.$message.error(res.msg)
+        }
+      },
+      //分配角色取消
+      roleClose() {
+        this.roleDialog.visible = false;
+      },
       // 搜索按钮 点击事件
       searchBtn() {
         this.getUserList();
