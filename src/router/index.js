@@ -90,10 +90,22 @@ export const constantRoutes = [
     alwaysShow: true,  //需要添加该项，否则上级不会展示
     children: [
       {
-        path: '/sysHouseList',
-        name: 'sysHouseList',
-        component: () => import('@/views/house/sysHouseList'),
-        meta: { title: '房屋列表', icon: 'table' }
+        path: '/houseBuilding',
+        name: 'houseBuilding',
+        component: () => import('@/views/house/houseBuilding'),
+        meta: { title: '栋数管理', icon: 'table' }
+      },
+      {
+        path: '/houseUnit',
+        name: 'houseUnit',
+        component: () => import('@/views/house/houseUnit'),
+        meta: { title: '单元管理', icon: 'table' }
+      },
+      {
+        path: '/houseList',
+        name: 'houseList',
+        component: () => import('@/views/house/houseList'),
+        meta: { title: '房屋管理', icon: 'table' }
       }
     ]
   },

@@ -394,7 +394,7 @@
           this.roleList = res.data.records;
           this.roleParam.total = res.data.total;
         }else {
-          this.$message.error(res.msg)
+          this.$message.error("列表数据获取失败，请联系管理员");
         }
       },
       //分配角色确认
