@@ -35,11 +35,9 @@ const actions = {
       login({ username: username.trim(), password: password,userType:userType }).then(response => {
 
         const { data } = response
-        console.log(data);
         setToken(data.token);
         //保存用户id到cookies
         setUserId(data.userId);
-        console.log(123);
         commit('SET_TOKEN', data.token)
 
         resolve()

@@ -108,6 +108,20 @@ export const constantRoutes = [
         meta: { title: '房屋管理', icon: 'table' }
       }
     ]
+  },{
+    path: '/sysPark',
+    component: Layout,
+    alwaysShow: true,
+    name: 'sysPark',
+    meta: { title: '车位管理', icon: 'el-icon-money' },
+    children: [
+      {
+        path: '/parkList',
+        name: 'parkList',
+        component: () => import('@/views/park/parkList'),
+        meta: { title: '车位管理', icon: 'table' }
+      }
+    ]
   },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

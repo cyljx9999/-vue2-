@@ -28,10 +28,10 @@
       <el-table-column align="center"  prop="unitName" label="单元名称"></el-table-column>
       <el-table-column align="center"  width="180" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" size="small" @click="editBtn(scope.row)"
+          <el-button icon="el-icon-edit" type="primary" size="small" @click="editBtn(scope.row)"
           >编辑</el-button
           >
-          <el-button type="danger" size="small" @click="deleteBtn(scope.row)"
+          <el-button icon="el-icon-delete" type="danger" size="small" @click="deleteBtn(scope.row)"
           >删除</el-button
           >
         </template>
