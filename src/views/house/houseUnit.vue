@@ -152,7 +152,7 @@
 
     mounted() {
       this.$nextTick(() => {
-        this.tableHeight = window.innerHeight - 200
+        this.tableHeight = window.innerHeight - 210
       })
     },
 

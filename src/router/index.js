@@ -122,6 +122,20 @@ export const constantRoutes = [
         meta: { title: '车位管理', icon: 'table' }
       }
     ]
+  },{
+    path: '/live',
+    component: Layout,
+    alwaysShow: true,
+    name: 'live',
+    meta: { title: '业主管理', icon: 'el-icon-s-grid' },
+    children: [
+      {
+        path: '/liveUser',
+        name: 'liveUser',
+        component: () => import('@/views/live/liveUser'),
+        meta: { title: '业主列表', icon: 'el-icon-s-data' }
+      }
+    ]
   },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

@@ -50,7 +50,7 @@
           </el-tag
           >
           <el-tag v-if="scope.row.status === '1'" type="success" size="small"
-          >未使用
+          >已使用
           </el-tag
           >
         </template>
@@ -269,7 +269,7 @@
 
     mounted() {
       this.$nextTick(() => {
-        this.tableHeight = window.innerHeight - 200;
+        this.tableHeight = window.innerHeight - 210;
       });
     },
 

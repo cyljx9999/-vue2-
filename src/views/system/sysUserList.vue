@@ -68,7 +68,7 @@
           >编辑
           </el-button>
           <el-button
-            type="primary"
+            type="warning"
             icon="el-icon-edit"
             size="small"
             @click="assignRole(scope.row)"
@@ -243,6 +243,20 @@
         },
         // 表单验证规则
         rules: {
+          loginName: [
+            {
+              required: true,
+              trigger: "change",
+              message: "请填写登录名",
+            },
+          ],
+          password: [
+            {
+              required: true,
+              trigger: "change",
+              message: "请填写密码",
+            },
+          ],
           userName: [
             {
               validator: checkUserName,
