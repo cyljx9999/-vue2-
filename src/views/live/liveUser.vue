@@ -329,7 +329,9 @@
     getHouseListApi,
     assignSaveApi,
     getParkListApi,
-    assignParkSaveApi
+    assignParkSaveApi,
+    returnHouseApi,
+    returnParkApi
   } from "../../api/liveUser";
 
   export default {
@@ -596,10 +598,48 @@
       deleteBtn(row) {
       },
       //退车位
-      leavePark(row) {
+     async leavePark(row) {
+        if (!row.liveStatue){
+          this.$message.warning("暂无可退的车位");
+          return;
+        }
+        let confirm = await this.$myconfirm("确定退车位吗？");
+        if (confirm) {
+          let res = await returnParkApi({
+            userId: row.userId,
+            parkId: row.parkId,
+          });
+          if (res && res.code === 200) {
+            //刷新列表
+            this.getList();
+            //信息提示
+            this.$message.success(res.msg);
+          }else {
+            this.$message.error(res.msg);
+          }
+        }
       },
       //退房
-      leaveHouse(row) {
+      async leaveHouse(row) {
+        if (!row.useStatus){
+          this.$message.warning("暂无可退的房屋");
+          return;
+        }
+        let confirm = await this.$myconfirm("确定退房吗？");
+        if (confirm) {
+          let res = await returnHouseApi({
+            userId: row.userId,
+            houseId: row.houseId,
+          });
+          if (res && res.code === 200) {
+            //刷新列表
+            this.getList();
+            //信息提示
+            this.$message.success(res.msg);
+          }else {
+            this.$message.error(res.msg);
+          }
+        }
       },
       //分配车位列表重置事件
       parkResetBtn() {
@@ -628,6 +668,7 @@
         this.parkDialog.title = "为【" + row.userName + "】分配车位";
         this.parkDialog.visible = true;
       },
+      //分配车位列表
       async getAssignParkList() {
         let res = await getParkListApi(this.parkParams);
         if (res && res.code === 200) {

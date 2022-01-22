@@ -38,3 +38,12 @@ export async function assignParkSaveApi(param){
   return http.post("/api/liveUser/assignParkSave",param)
 }
 
+//退房
+export async function returnHouseApi(param){
+  return http.post("/api/liveUser/returnHouse",param)
+}
+//退车位
+export async function returnParkApi(param){
+  console.log(param);
+  return http.post("/api/liveUser/returnPark",param)
+}

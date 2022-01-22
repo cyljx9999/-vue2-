@@ -46,13 +46,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard' }
-    }]
+    redirect: '/sysUserList',
   },
 
   {
@@ -134,6 +128,33 @@ export const constantRoutes = [
         name: 'liveUser',
         component: () => import('@/views/live/liveUser'),
         meta: { title: '业主列表', icon: 'el-icon-s-data' }
+      }
+    ]
+  },
+  {
+    path: '/fee',
+    component: Layout,
+    alwaysShow: true,
+    name: 'fee',
+    meta: { title: '收费管理', icon: 'el-icon-s-open' },
+    children: [
+      {
+        path: '/feePower',
+        name: 'feePower',
+        component: () => import('@/views/fee/feePower'),
+        meta: { title: '电费管理', icon: 'el-icon-picture' }
+      },
+      {
+        path: '/feeWater',
+        name: 'feeWater',
+        component: () => import('@/views/fee/feeWater'),
+        meta: { title: '水费管理', icon: 'el-icon-s-data' }
+      },
+      {
+        path: '/feePark',
+        name: 'feePark',
+        component: () => import('@/views/fee/feePark'),
+        meta: { title: '停车管理', icon: 'el-icon-s-order' }
       }
     ]
   },

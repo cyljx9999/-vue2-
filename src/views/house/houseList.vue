@@ -141,7 +141,7 @@
               size="small"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="status" label="使用状态" size="normal">
+          <el-form-item v-if="addModule.editType === '0'" prop="status" label="使用状态" size="normal">
             <el-radio-group v-model="addModule.status">
               <el-radio :label="'0'">未使用</el-radio>
               <el-radio :label="'1'">已使用</el-radio>

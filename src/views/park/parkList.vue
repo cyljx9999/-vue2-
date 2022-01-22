@@ -248,7 +248,7 @@
         mounted() {
           this.$nextTick(()=>{
             this.tableHeight = window.innerHeight -210
-          })
+          });
         },
 
         methods: {
