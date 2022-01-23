@@ -1,18 +1,15 @@
 <template>
   <el-main>
-    <!-- 搜索框 -->
+    <!-- 搜索 -->
     <el-form
       :model="params"
-      ref="searchForm"
+      ref="searchParm"
       label-width="80px"
       :inline="true"
       size="small"
     >
-      <el-form-item label="标题">
-        <el-input v-model="params.title"></el-input>
-      </el-form-item>
-      <el-form-item label="内容">
-        <el-input v-model="params.complaintContent"></el-input>
+      <el-form-item label="报修内容">
+        <el-input v-model="params.repairContent"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button icon="el-icon-search" @click="searchBtn">查询</el-button>
@@ -24,10 +21,10 @@
     </el-form>
     <!-- 表格 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
-      <el-table-column align="center" label="标题" prop="title"></el-table-column>
-      <el-table-column align="center" label="内容" prop="complaintContent"></el-table-column>
-      <el-table-column align="center" label="创建时间" prop="createTime"></el-table-column>
-      <el-table-column align="center" label="处理状态" prop="status">
+      <el-table-column label="报修内容" prop="repairContent"></el-table-column>
+      <el-table-column label="报修地址" prop="repairAddress"></el-table-column>
+      <el-table-column label="联系电话" prop="phone"></el-table-column>
+      <el-table-column label="处理状态" prop="status">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === '1'" type="success" size="small"
           >已处理</el-tag
@@ -86,11 +83,14 @@
           :inline="false"
           size="small"
         >
-          <el-form-item prop="title" label="标题">
-            <el-input v-model="addModel.title"></el-input>
+          <el-form-item prop="repairContent" label="维修内容">
+            <el-input type="textarea" v-model="addModel.repairContent"></el-input>
           </el-form-item>
-          <el-form-item prop="complaintContent" label="投诉内容">
-            <el-input type="textarea" v-model="addModel.complaintContent"></el-input>
+          <el-form-item prop="repairAddress" label="维修地点">
+            <el-input v-model="addModel.repairAddress"></el-input>
+          </el-form-item>
+          <el-form-item prop="phone" label="联系电话">
+            <el-input v-model="addModel.phone"></el-input>
           </el-form-item>
         </el-form>
       </template>
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-  import { getMyListApi, addApi, editApi, deleteApi } from "@/api/userComplaint";
+  import { getMyListApi, addApi, editApi, deleteApi } from "@/api/repair";
   import { getUserId } from "@/utils/auth";
   import SysDialog from "@/components/System/SysDialog.vue";
   export default {
@@ -110,33 +110,41 @@
       return {
         //表单验证规则
         rules: {
-          title: [
+          repairContent: [
             {
               trigger: "change",
               required: true,
-              message: "请填写标题",
+              message: "请填写维修内容",
             },
           ],
-          complaintContent: [
+          repairAddress: [
             {
               trigger: "change",
               required: true,
-              message: "请填写投诉内容",
+              message: "请填写维修地址",
+            },
+          ],
+          phone: [
+            {
+              trigger: "change",
+              required: true,
+              message: "请填写联系电话",
             },
           ],
         },
-        //新增投诉绑定对象
+        //表单数据域
         addModel: {
-          complaintId: "",
-          userId: "",
           editType: "",
-          title: "",
-          complaintContent: "",
+          repairId: "",
+          userId: "",
+          phone: "",
+          repairAddress: "",
+          repairContent: "",
         },
-        //定义弹框属性
+        //弹框属性定义
         addDialog: {
           title: "",
-          height: 180,
+          height: 200,
           width: 650,
           visible: false,
         },
@@ -144,19 +152,17 @@
         tableHeight: 0,
         //表格数据
         tableList: [],
-        //列表查询参数
         params: {
+          total: 0,
           currentPage: 1,
           pageSize: 10,
-          title: "",
-          complaintContent: "",
-          total: 0,
-          userId:''
+          userId: "",
+          repairContent: "",
         },
       };
     },
     created() {
-      this.getList();
+      this.getMyList();
     },
     mounted() {
       this.$nextTick(() => {
@@ -168,6 +174,7 @@
       onConfirm() {
         this.$refs.addForm.validate(async (valid) => {
           if (valid) {
+            //设置用户id
             this.addModel.userId = getUserId();
             let res = null;
             if (this.addModel.editType === "0") {
@@ -176,10 +183,17 @@
               res = await editApi(this.addModel);
             }
             if (res && res.code === 200) {
-              //刷新列表
-              this.getList();
+              //刷新表格
+              this.getMyList();
+              //信息提示
               this.$message.success(res.msg);
               this.addDialog.visible = false;
+            }else {
+              if (res){
+                this.$message.error(res.msg);
+              }else {
+                this.$message.error("请求失败，请联系管理员");
+              }
             }
           }
         });
@@ -188,45 +202,25 @@
       onClose() {
         this.addDialog.visible = false;
       },
-      //处理按钮
-      async doBtn(row){
-        let param = {
-          complaintId: row.complaintId,
-          status:'1'
-        };
-        const confirm = await this.$myconfirm("确定处理该投诉吗?");
-        if (confirm) {
-          let res = await editApi(param);
-          if (res && res.code === 200) {
-            //刷新表格
-            this.getList();
-            this.$message.success(res.msg);
-          }else {
-            this.$message.error(res.msg);
-          }
-        }
+      //页数改变时触发
+      currentChange(val) {
+        this.params.currentPage = val;
+        this.getMyList();
       },
-      //新增按钮
-      addBtn() {
-        //清空表单
-        this.$resetForm("addForm", this.addModel);
-        //设置编辑属性
-        this.addModel.editType = "0";
-        //设置弹框属性
-        this.addDialog.title = "新增投诉";
-        this.addDialog.visible = true;
+      //页容量改变时触发
+      sizeChange(val) {
+        this.params.pageSize = val;
+        this.getMyList();
       },
       //删除按钮
       async deleteBtn(row) {
-        let param = {
-          complaintId: row.complaintId,
-        };
-        const confirm = await this.$myconfirm("确定删除该数据吗?");
+        //信息提示
+        let confirm = await this.$myconfirm("确定删除该数据吗?");
         if (confirm) {
-          let res = await deleteApi(param);
+          let res = await deleteApi({ repairId: row.repairId });
           if (res && res.code === 200) {
-            //刷新表格
-            this.getList();
+            //刷新列表
+            this.getMyList();
             this.$message.success(res.msg);
           }else {
             this.$message.error(res.msg);
@@ -237,43 +231,39 @@
       editBtn(row) {
         //清空表单
         this.$resetForm("addForm", this.addModel);
-        //设置弹框属性
-        this.addDialog.title = "编辑投诉";
-        this.addDialog.visible = true;
         //把当前要编辑的数据复制到表单数据域
         this.$objCopy(this.addModel,row);
         //设置编辑属性
         this.addModel.editType = "1";
+        //设置弹框属性
+        this.addDialog.title = "编辑维修";
+        this.addDialog.visible = true;
+      },
+      //新增按钮
+      addBtn() {
+        //清空表单
+        this.$resetForm("addForm", this.addModel);
+        //设置编辑属性
+        this.addModel.editType = "0";
+        //设置弹框属性
+        this.addDialog.title = "新增维修";
+        this.addDialog.visible = true;
       },
       //重置按钮
       resetBtn() {
-        this.params.title = "";
-        this.params.complaintContent = "";
-        this.getList();
+        this.params.repairContent = "";
+        this.getMyList();
       },
       //搜索按钮
       searchBtn() {
-        this.getList();
+        this.getMyList();
       },
-      //页数改变时触发
-      currentChange(val) {
-        this.params.currentPage = val;
-        this.getList();
-      },
-      //页容量改变时触发
-      sizeChange(val) {
-        this.params.pageSize = val;
-        this.getList();
-      },
-
       //获取列表
-      async getList() {
+      async getMyList() {
         this.params.userId = getUserId();
         let res = await getMyListApi(this.params);
         if (res && res.code === 200) {
-          //把返回的数据放到表格
           this.tableList = res.data.records;
-          this.params.total = res.data.total;
         }else {
           this.$message.error(res.msg);
         }

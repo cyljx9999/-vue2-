@@ -179,6 +179,27 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/repairModel',
+    component: Layout,
+    alwaysShow: true,
+    name: 'repairModel',
+    meta: { title: '维修管理', icon: 'el-icon-picture-outline' },
+    children: [
+      {
+        path: '/repairList',
+        name: 'repairList',
+        component: () => import('@/views/repair/repairList'),
+        meta: { title: '维修列表', icon: 'el-icon-s-marketing' }
+      },
+      {
+        path: '/myRepair',
+        name: 'myRepair',
+        component: () => import('@/views/repair/myRepair'),
+        meta: { title: '我的维修', icon: 'el-icon-picture-outline' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
