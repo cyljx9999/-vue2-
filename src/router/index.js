@@ -200,6 +200,21 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/notice',
+    component: Layout,
+    alwaysShow: true,
+    name: 'notice',
+    meta: { title: '公告管理', icon: 'el-icon-document-copy' },
+    children: [
+      {
+        path: '/noticeList',
+        name: 'noticeList',
+        component: () => import('@/views/notice/noticeList'),
+        meta: { title: '公告列表', icon: 'el-icon-s-marketing' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

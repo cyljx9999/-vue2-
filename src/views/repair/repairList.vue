@@ -20,10 +20,11 @@
     </el-form>
     <!-- 表格 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
-      <el-table-column label="报修内容" prop="repairContent"></el-table-column>
-      <el-table-column label="报修地址" prop="repairAddress"></el-table-column>
-      <el-table-column label="联系电话" prop="phone"></el-table-column>
-      <el-table-column label="处理状态" prop="status">
+      <el-table-column align="center" label="报修内容" prop="repairContent"></el-table-column>
+      <el-table-column align="center" label="报修地址" prop="repairAddress"></el-table-column>
+      <el-table-column align="center" label="联系电话" prop="phone"></el-table-column>
+      <el-table-column align="center" label="提交时间" prop="commitTime"></el-table-column>
+      <el-table-column align="center" label="处理状态" prop="status">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status === '1'" type="success" size="small"
           >已处理</el-tag

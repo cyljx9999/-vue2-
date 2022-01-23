@@ -180,6 +180,12 @@
               this.getList();
               this.$message.success(res.msg);
               this.addDialog.visible = false;
+            }else {
+              if (res){
+                this.$message.error(res.msg);
+              }else {
+                this.$message.error("请求失败，请联系管理员");
+              }
             }
           }
         });
@@ -187,24 +193,6 @@
       //弹框关闭
       onClose() {
         this.addDialog.visible = false;
-      },
-      //处理按钮
-      async doBtn(row){
-        let param = {
-          complaintId: row.complaintId,
-          status:'1'
-        };
-        const confirm = await this.$myconfirm("确定处理该投诉吗?");
-        if (confirm) {
-          let res = await editApi(param);
-          if (res && res.code === 200) {
-            //刷新表格
-            this.getList();
-            this.$message.success(res.msg);
-          }else {
-            this.$message.error(res.msg);
-          }
-        }
       },
       //新增按钮
       addBtn() {
@@ -235,6 +223,10 @@
       },
       //编辑按钮
       editBtn(row) {
+        if (row.status === "1"){
+          this.$message.warning("投诉已处理，无法编辑");
+          return
+        }
         //清空表单
         this.$resetForm("addForm", this.addModel);
         //设置弹框属性
