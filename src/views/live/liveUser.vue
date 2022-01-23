@@ -331,7 +331,8 @@
     getParkListApi,
     assignParkSaveApi,
     returnHouseApi,
-    returnParkApi
+    returnParkApi,
+    deleteLiveUserApi
   } from "../../api/liveUser";
 
   export default {
@@ -595,7 +596,29 @@
         this.addModel.editType = "1";
       },
       //删除
-      deleteBtn(row) {
+      async deleteBtn(row) {
+        if (row.liveStatue){
+          this.$message.warning("请先退车位再操作");
+          return;
+        }
+        if (row.useStatus){
+          this.$message.warning("请先退房屋再操作");
+          return;
+        }
+        let confirm = await this.$myconfirm("确定删除该业主嘛吗？");
+        if (confirm) {
+          let res = await deleteLiveUserApi({
+            userId: row.userId
+          });
+          if (res && res.code === 200) {
+            //刷新列表
+            this.getList();
+            //信息提示
+            this.$message.success(res.msg);
+          }else {
+            this.$message.error(res.msg);
+          }
+        }
       },
       //退车位
      async leavePark(row) {
@@ -654,7 +677,7 @@
       },
       //分配车位
       assignPark(row) {
-        if (row.parkName){
+        if (row.liveStatue === "0"){
           this.$message.warning("已分配车位，不能重复分配");
           return;
         }
@@ -681,7 +704,7 @@
 
       //分配房屋
       async assignHouse(row) {
-        if(row.houseNum){
+        if(row.useStatus === "0"){
           this.$message.warning('已经分配房屋，不能重复分配!');
           return;
         }

@@ -20,7 +20,10 @@ export async function getLiveUserByIdApi(param){
 export async function editLiveUserApi(param){
   return http.put("/api/liveUser",param)
 }
-
+//编辑
+export async function deleteLiveUserApi(param){
+  return http.delete("/api/liveUser",param)
+}
 //获取房屋列表
 export async function getHouseListApi(param){
   return http.get("/api/houseList/list",param)
