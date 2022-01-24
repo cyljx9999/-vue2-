@@ -24,7 +24,7 @@
     </el-form>
     <!-- 表格 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
-      <el-table-column align="center" label="姓名" prop="userName"></el-table-column>
+      <el-table-column align="center" label="姓名" prop="loginName"></el-table-column>
       <el-table-column align="center" label="电话" prop="phone"></el-table-column>
       <el-table-column align="center" label="栋数" prop="buildName"></el-table-column>
       <el-table-column align="center" label="单元" prop="unitName"></el-table-column>
@@ -391,6 +391,10 @@
       },
       //编辑按钮
       editBtn(row) {
+        if (row.payWaterStatus === '1'){
+          this.$message.warning("已缴费，无法编辑");
+          return
+        }
         //2.根据栋数的id查询单元列表
         this.getUnitListById(row.buildId);
         //3.根据单元id查询房屋列表

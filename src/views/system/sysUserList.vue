@@ -9,7 +9,7 @@
       size="small"
     >
       <el-form-item label="姓名">
-        <el-input v-model="params.userName"></el-input>
+        <el-input v-model="params.loginName"></el-input>
       </el-form-item>
       <el-form-item label="电话">
         <el-input v-model="params.phone"></el-input>
@@ -23,7 +23,7 @@
 
     <!-- 员工表格 -->
     <el-table :height="tableHeight" :data="tableList" empty-text="暂无数据" border stripe>
-      <el-table-column align="center" prop="userName" label="姓名"></el-table-column>
+      <el-table-column align="center" prop="loginName" label="姓名"></el-table-column>
       <el-table-column align="center" prop="phone" label="电话"></el-table-column>
       <el-table-column align="center" prop="idCard" label="身份证"></el-table-column>
       <el-table-column align="center" prop="sex" label="性别">
@@ -119,8 +119,8 @@
           :inline="true"
           size="small"
         >
-          <el-form-item prop="userName" label="姓名:">
-            <el-input v-model="addModel.userName"></el-input>
+          <el-form-item prop="loginName" label="姓名:">
+            <el-input v-model="addModel.loginName"></el-input>
           </el-form-item>
           <el-form-item style="width:280px;" prop="sex" label="性别:">
             <el-radio-group v-model="addModel.sex">
@@ -134,8 +134,8 @@
           <el-form-item prop="idCard" label="身份证:">
             <el-input v-model="addModel.idCard"></el-input>
           </el-form-item>
-          <el-form-item prop="loginName" label="登录名:">
-            <el-input v-model="addModel.loginName"></el-input>
+          <el-form-item prop="username" label="登录名:">
+            <el-input v-model="addModel.username"></el-input>
           </el-form-item>
           <el-form-item prop="password" label="密码:">
             <el-input type="password" v-model="addModel.password"></el-input>
@@ -243,7 +243,7 @@
         },
         // 表单验证规则
         rules: {
-          loginName: [
+          username: [
             {
               required: true,
               trigger: "change",
@@ -257,7 +257,7 @@
               message: "请填写密码",
             },
           ],
-          userName: [
+          loginName: [
             {
               validator: checkUserName,
               required: true,
@@ -307,7 +307,7 @@
         addModel: {
           userId: '',
           type: '', //0： 新增 1： 编辑
-          userName: '',
+          username: '',
           sex: '',
           phone: '',
           idCard: '',
@@ -329,7 +329,7 @@
         //搜索框数据绑定
         params: {
           phone: "",
-          userName: "",
+          loginName: "",
           pageSize: 10,
           currentPage: 1,
           total: 0,
@@ -436,7 +436,7 @@
       // 重置按钮 点击事件
       resetBtn() {
         this.params.phone = '';
-        this.params.userName = '';
+        this.params.loginName = '';
         this.getUserList();
       },
       //新增员工按钮事件

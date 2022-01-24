@@ -98,7 +98,7 @@
     </sys-dialog>
 
     <el-table :height="tableHeight" :data="powerList" border stripe>
-      <el-table-column align="center" prop="userName" label="姓名"></el-table-column>
+      <el-table-column align="center" prop="loginName" label="姓名"></el-table-column>
       <el-table-column align="center" prop="phone" label="电话"></el-table-column>
       <el-table-column align="center" prop="buildName" label="栋数"></el-table-column>
       <el-table-column align="center" prop="unitName" label="单元"></el-table-column>
@@ -326,6 +326,10 @@
       },
       //编辑按钮
       editBtn(row) {
+        if (row.payPowerStatus === '1'){
+          this.$message.warning("已缴费，无法编辑");
+          return
+        }
         //查询单元列表
         this.getUnitList(row.buildId);
         //查询房屋列表

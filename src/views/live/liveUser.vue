@@ -9,20 +9,20 @@
       size="small"
     >
       <el-form-item label="姓名">
-        <el-input v-model="params.userName"></el-input>
+        <el-input v-model="params.loginName"></el-input>
       </el-form-item>
       <el-form-item label="电话">
         <el-input v-model="params.phone"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="el-icon-search">查询</el-button>
-        <el-button style="color: #ff7670" icon="el-icon-close">重置</el-button>
+        <el-button icon="el-icon-search" @click="searchBtn">查询</el-button>
+        <el-button style="color: #ff7670" icon="el-icon-close" @click="resetBtn">重置</el-button>
         <el-button icon="el-icon-plus" type="primary" @click="addBtn">新增</el-button>
       </el-form-item>
     </el-form>
     <!-- 表格 -->
     <el-table :height="tableHeight" :data="tableList" empty-text="暂无数据" border stripe>
-      <el-table-column align="center" prop="userName" label="姓名"></el-table-column>
+      <el-table-column align="center" prop="loginName" label="姓名"></el-table-column>
       <el-table-column align="center" prop="sex" label="性别">
         <template slot-scope="scope">
           <el-tag type="success" size="normal" v-if="scope.row.sex === '0'">男</el-tag>
@@ -95,8 +95,8 @@
           :inline="true"
           size="small"
         >
-          <el-form-item prop="userName" label="姓名">
-            <el-input v-model="addModel.userName"></el-input>
+          <el-form-item prop="loginName" label="姓名">
+            <el-input v-model="addModel.loginName"></el-input>
           </el-form-item>
           <el-form-item prop="sex" label="性别">
             <el-radio-group v-model="addModel.sex">
@@ -118,8 +118,8 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="loginName" label="账户">
-            <el-input v-model="addModel.loginName"></el-input>
+          <el-form-item prop="username" label="登录名">
+            <el-input v-model="addModel.username"></el-input>
           </el-form-item>
           <el-form-item v-if="addModel.editType !== '1'" prop="password" label="密码">
             <el-input v-model="addModel.password"></el-input>
@@ -400,7 +400,7 @@
         addModel: {
           editType: "",
           userId: "",
-          userName: "",
+          username: "",
           phone: "",
           sex: "",
           loginName: "",
@@ -410,7 +410,7 @@
         },
         //表单验证规则
         rules: {
-          userName: [
+          loginName: [
             {
               trigger: "change",
               required: true,
@@ -432,7 +432,7 @@
               message: "请选择性别",
             },
           ],
-          loginName: [
+          username: [
             {
               trigger: "change",
               required: true,
@@ -470,7 +470,7 @@
         },
         //参数
         params: {
-          userName: "",
+          loginName: "",
           phone: "",
           currentPage: 1,
           total: 0,
@@ -501,6 +501,16 @@
     },
 
     methods: {
+      //搜索
+      searchBtn(){
+        this.getList();
+      },
+      //搜索
+      resetBtn(){
+        this.params.loginName = '';
+        this.params.phone = '';
+        this.getList();
+      },
       //分配车位页数改变触发
       assignParkCurrentChange(val) {
         this.parkParams.currentPage = val;

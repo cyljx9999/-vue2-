@@ -24,7 +24,7 @@
     </el-form>
     <!-- 表格 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
-      <el-table-column align="center" label="姓名" prop="userName"></el-table-column>
+      <el-table-column align="center" label="姓名" prop="loginName"></el-table-column>
       <el-table-column align="center" label="电话" prop="phone"></el-table-column>
       <el-table-column align="center" label="车位" prop="parkName"></el-table-column>
       <el-table-column align="center" label="车位类型" prop="parkType">
@@ -306,6 +306,10 @@
       },
       //编辑按钮
       editBtn(row) {
+        if (row.payParkStatus === '1'){
+          this.$message.warning("已缴费，无法编辑");
+          return
+        }
         //清空表单
         this.$resetForm("addForm", this.addModel);
         //设置弹框属性

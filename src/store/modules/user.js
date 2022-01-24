@@ -52,9 +52,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
         if (!data) {
-          return reject('Verification failed, please Login again.')
+          return reject(response.msg)
         }
 
         const { name, avatar } = data
