@@ -67,8 +67,7 @@
           >删除</el-button
           >
           <el-button
-            v-if="scope.row.payParkStatus === '0'"
-            icon="el-icon-delete"
+            icon="el-icon-edit"
             type="warning"
             size="small"
             @click="payBtn(scope.row)"

@@ -120,7 +120,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item prop="parkStatus" label="使用状态">
+          <el-form-item v-if="addModel.editType === '0'" prop="parkStatus" label="使用状态">
             <el-select v-model="addModel.parkStatus">
               <el-option
                 v-for="item in useOptions"
