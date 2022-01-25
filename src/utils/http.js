@@ -25,7 +25,6 @@ service.interceptors.request.use(
   },
   error => {
     // do something with request error
-    console.log(error)// for debug
     Message({
       message: error.msg || "请求超时，请重试/联系管理员",
       type: 'error',
@@ -49,33 +48,31 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
+// 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+    if (res.code === 600) {
+      // to re-login
+      MessageBox.confirm('您的登录认证信息已过期，请重新登录', '系统提示', {
+        confirmButtonText: '去登陆',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('user/resetToken').then(() => {
+          location.reload()
+        })
+      })
+    }
     // if the custom code is not 20000, it is judged as an error.
-    // if (res.code !== 200) {
-    //   Message({
-    //     message: res.msg + "555" || '服务器出错',
-    //     type: 'error',
-    //     duration: 5 * 1000
-    //   })
-    //
-    //   // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-    //   if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-    //     // to re-login
-    //     MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-    //       confirmButtonText: 'Re-Login',
-    //       cancelButtonText: 'Cancel',
-    //       type: 'warning'
-    //     }).then(() => {
-    //       store.dispatch('user/resetToken').then(() => {
-    //         location.reload()
-    //       })
-    //     })
-    //   }
-    //   return Promise.reject(new Error(res.msg + " 13323"|| '服务器出错'))
-    // } else {
-    //
-    // }
-    return res
+    if (res.code === 400 || res.code === 500) {
+      Message({
+        message: res.msg || 'Error',
+        type: 'error',
+        duration: 2000
+      })
+
+      return Promise.reject(new Error(res.msg || 'Error'))
+    } else {
+      return res
+    }
   },
   error => {
     console.log('err' + error) // for debug

@@ -139,7 +139,7 @@
       };
     },
     created() {
-      this.getlList();
+      this.getList();
     },
     mounted() {
       this.$nextTick(() => {
@@ -159,9 +159,11 @@
             }
             if (res && res.code === 200) {
               //刷新列表
-              this.getlList();
+              this.getList();
               this.$message.success(res.msg);
               this.addDialog.visible = false;
+            }else {
+              this.$message.error(res.msg)
             }
           }
         });
@@ -173,12 +175,12 @@
       //页数改变时触发
       currentChange(val) {
         this.params.currentPage = val;
-        this.getlList();
+        this.getList();
       },
       //页容量改变时触发
       sizeChange(val) {
         this.params.pageSize = val;
-        this.getlList();
+        this.getList();
       },
       //删除按钮
       async deleteBtn(row) {
@@ -188,8 +190,10 @@
           let res = await deleteApi({ noticeId: row.noticeId });
           if (res && res.code === 200) {
             //刷新列表
-            this.getlList();
+            this.getList();
             this.$message.success(res.msg);
+          }else {
+            this.$message.error(res.msg)
           }
         }
       },
@@ -218,19 +222,22 @@
       //重置按钮
       resetBtn() {
         this.params.title = "";
-        this.getlList();
+        this.getList();
       },
       //查询按钮
       searchBtn() {
-        this.getlList();
+        this.getList();
       },
       //获取列表
-      async getlList() {
+      async getList() {
         let res = await getListApi(this.params);
         if (res && res.code === 200) {
           this.tableList = res.data.records;
           this.params.total = res.data.total;
+        }else {
+          this.$message.error(res.msg)
         }
+
       },
     },
   };

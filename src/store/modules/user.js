@@ -1,12 +1,13 @@
-import { login, logout, getInfo} from '@/api/user'
-import { getToken, setToken, removeToken,setUserId  } from '@/utils/auth'
+import { login, loginOutApi, getInfo} from '@/api/user'
+import {getToken, setToken, removeToken, setUserId, removeUserId, clearSession} from '@/utils/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    roles: [],
   }
 }
 
@@ -24,6 +25,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
   }
 }
 
@@ -33,8 +37,8 @@ const actions = {
     const { username, password,userType } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password,userType:userType }).then(response => {
-
         const { data } = response
+
         setToken(data.token);
         //保存用户id到cookies
         setUserId(data.userId);
@@ -53,11 +57,17 @@ const actions = {
       getInfo(state.token).then(response => {
         const { data } = response
         if (!data) {
-          return reject(response.msg)
+          return reject("获取用户信息失败，请登录")
         }
 
-        const { name, avatar } = data
-
+        const { name, avatar,roles } = data
+        if (!roles || roles.length <= 0) {
+          return reject('getInfo: 用户的权限信息必须是一个数组!')
+        }
+        //把权限字段放到sessionStorage里面
+        sessionStorage.setItem('codeList',JSON.stringify(roles))
+        //把roles存到store里面
+        commit('SET_ROLES', roles)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
@@ -68,12 +78,15 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit,dispatch, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      loginOutApi(state.token).then(() => {
         removeToken() // must remove  token  first
+        removeUserId();
+        clearSession();
         resetRouter()
         commit('RESET_STATE')
+        dispatch('tagsView/delAllViews',{}, {root: true})
         resolve()
       }).catch(error => {
         reject(error)
@@ -82,10 +95,13 @@ const actions = {
   },
 
   // remove token
-  resetToken({ commit }) {
+  resetToken({ commit ,dispatch}) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
+      removeUserId();
+      clearSession();
       commit('RESET_STATE')
+      dispatch('tagsView/delAllViews',{}, {root: true})
       resolve()
     })
   }

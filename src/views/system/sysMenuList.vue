@@ -125,7 +125,7 @@
 
 
             <el-form-item
-              v-if="addModel.type === '1'"
+              v-if="addModel.type !== '2'"
               prop="path"
               label="路由地址"
             >
@@ -269,13 +269,6 @@
                     required: true,
                     trigger: "change",
                     message: "请填写菜单名称",
-                  },
-                ],
-                icon: [
-                  {
-                    required: true,
-                    trigger: "change",
-                    message: "请填写图标",
                   },
                 ],
                 name: [

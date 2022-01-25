@@ -27,3 +27,7 @@ export function getUserId(){
 export function removeUserId(){
   return Cookies.remove(userIdKey);
 }
+//清空sessionStorage
+export function clearSession(){
+  return sessionStorage.clear();
+}

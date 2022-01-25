@@ -86,11 +86,11 @@
             this.loading = true;
             this.$store
               .dispatch("user/login", this.loginForm)
-              .then(() => {
+              .then((res) => {
                 this.$router.push({ path: this.redirect || "/" });
                 this.loading = false;
               })
-              .catch(() => {
+              .catch((error) => {
                 this.loading = false;
               });
           }

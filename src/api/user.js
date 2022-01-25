@@ -41,9 +41,14 @@ export async function assignSave(param){
   return http.post("/api/user/saveRole", param);
 }
 
-export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
-  })
+export async function getMenuList(){
+  return http.get("/api/user/getMenuList")
+}
+//退出登录
+export async function loginOutApi(){
+  return http.post("/api/user/loginOut",null)
+}
+//修改密码
+export async function resetPasswordApi(parm){
+  return http.post("/api/user/resetPassword",parm)
 }

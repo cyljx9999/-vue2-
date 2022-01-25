@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    append-to-body
     top='1vh'
     :title="title"
     :visible="visible"

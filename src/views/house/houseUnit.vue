@@ -233,7 +233,7 @@
       },
       //重置
       resetBtn() {
-        this.params.buildNme = "";
+        this.params.buildName = "";
         this.params.unitName = "";
         this.getList();
       },

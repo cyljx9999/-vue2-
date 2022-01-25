@@ -300,7 +300,7 @@
                 this.$message.success(res.msg);
                 this.getParkList();
               }else {
-                this.$message.success(res.msg);
+                this.$message.error(res.msg);
               }
             }
           },

@@ -235,7 +235,7 @@
           },
           //重置按钮
           resetBtn() {
-            this.param.name = "";
+            this.param.buildName = "";
             this.param.type = "";
             this.getList();
           },
@@ -278,7 +278,6 @@
           //获取栋数列表
           async getList() {
             let res = await getListApi(this.param);
-            console.log(res);
             if (res && res.code === 200) {
               this.tableList = res.data.records;
               this.param.total = res.data.total;

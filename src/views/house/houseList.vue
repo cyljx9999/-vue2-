@@ -9,7 +9,7 @@
       size="small"
     >
       <el-form-item label="栋数名称">
-        <el-input placeholder="请输入栋数名称" v-model="params.buildNme"></el-input>
+        <el-input placeholder="请输入栋数名称" v-model="params.buildName"></el-input>
       </el-form-item>
       <el-form-item label="单元名称">
         <el-input placeholder="请输入单元名称" v-model="params.unitName"></el-input>
@@ -105,8 +105,8 @@
           :inline="true"
           size="small"
         >
-          <el-form-item prop="buildValue" label="所属栋数">
-            <el-select v-model="addModule.buildValue" @change="selectBuild">
+          <el-form-item prop="buildId" label="所属栋数">
+            <el-select v-model="addModule.buildId" @change="selectBuild">
               <el-option
                 v-for="item in buildList"
                 :key="item.buildId"
@@ -217,7 +217,7 @@
           houseNum: "",
           houseArea: "",
           status: "",
-          buildValue: "",
+          buildId: "",
         },
         //弹框属性
         addDialog: {
@@ -276,6 +276,7 @@
     methods: {
       //选择栋数触发事件
       selectBuild(val) {
+        console.log(val)
         //清空原来的数据
         this.addModule.unitId = "";
         //根据栋数id查询对应的单元
@@ -338,6 +339,7 @@
       },
       //编辑按钮
       editBtn(row) {
+        console.log(row)
         //根据栋数id查询单元列表
         this.getUnitListByBuildId(row.buildId);
         //清空表单
@@ -351,7 +353,7 @@
         //设置编辑标志
         this.addModule.editType = "1";
         //栋数回显
-        this.addModule.buildValue = row.buildName;
+        this.addModule.buildId = row.buildId;
       },
       //新增按钮
       addBtn() {

@@ -343,7 +343,6 @@
       //查询列表
       async getList() {
         let res = await getListApi(this.params);
-        console.log(res);
         if (res && res.code === 200) {
           //赋值给表格数据
           this.tableList = res.data.records;

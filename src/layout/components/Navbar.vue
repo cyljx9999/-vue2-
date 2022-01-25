@@ -1,5 +1,33 @@
 <template>
   <div class="navbar">
+
+    <!-- 修改密码的弹框 -->
+    <sys-dialog
+      :title="dialog.title"
+      :height="dialog.height"
+      :width="dialog.width"
+      :visible="dialog.visible"
+      @onClose="onClose"
+      @onConfirm="onConfirm"
+    >
+      <template slot="content">
+        <el-form
+          :model="params"
+          ref="changeForm"
+          :rules="rules"
+          label-width="80px"
+          :inline="true"
+          size="small"
+        >
+          <el-form-item prop="oldPassword" label="旧密码">
+            <el-input v-model="params.oldPassword"></el-input>
+          </el-form-item>
+          <el-form-item prop="newPassword" label="新密码">
+            <el-input v-model="params.newPassword"></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+    </sys-dialog>
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
@@ -12,7 +40,7 @@
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
 
-          <el-dropdown-item divided>
+          <el-dropdown-item divided @click.native="resetPassword">
             <span style="display:block;">重置密码</span>
           </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
@@ -28,12 +56,43 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
-
+import SysDialog from "../../components/System/SysDialog";
+import {resetPasswordApi} from "../../api/user";
+import {getUserId} from "../../utils/auth";
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    SysDialog
   },
+  data(){
+    return {
+      rules:{
+        oldPassword:[{
+          trigger:"change",
+          require:true,
+          message:"请填写旧密码"
+        }],
+        newPassword:[{
+          trigger:"change",
+          require:true,
+          message:"请填写旧密码"
+        }]
+      },
+      dialog:{
+        title:"修改密码",
+        height:150,
+        width:630,
+        visible:false
+      },
+      params:{
+        userId:getUserId(),
+        oldPassword:'',
+        newPassword:''
+      }
+    }
+  }
+  ,
   computed: {
     ...mapGetters([
       'sidebar',
@@ -41,13 +100,38 @@ export default {
     ])
   },
   methods: {
+    onConfirm() {
+      this.$refs.changeForm.validate(async (valid) => {
+        if (valid) {
+          let res = await resetPasswordApi(this.params);
+          if (res && res.code === 200) {
+            this.dialog.visible = false;
+            await this.$store.dispatch("user/logout");
+            this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+          }else {
+            this.$message.error(res.msg)
+          }
+        }
+      });
+    },
+    onClose() {
+      this.dialog.visible = false;
+    },
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-    }
+      let confirm = await this.$myconfirm("确定退出登录吗?");
+      if (confirm) {
+        await this.$store.dispatch("user/logout");
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`);
+      }
+    },
+    //重置密码
+    async resetPassword() {
+      //信息提示
+        this.dialog.visible = true;
+    },
   }
 }
 </script>
